@@ -1,19 +1,20 @@
+
+buildscript {
+    ext {
+        queryDslVersion = "5.0.0"
+    }
+}
+
+
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '2.6.2' // Spring Boot 버전 수정
-    id 'io.spring.dependency-management' version '1.1.4'
+    id 'org.springframework.boot' version '3.1.0'
+    id 'io.spring.dependency-management' version '1.1.0'
 }
 
-group = 'orz.zerock'
+group = 'org.zerock'
 version = '0.0.1-SNAPSHOT'
-
-java {
-    sourceCompatibility = '17'
-}
-
-ext {
-    queryDslVersion = '5.0.0' // Querydsl 버전 추가
-}
+sourceCompatibility = '17'
 
 configurations {
     compileOnly {
@@ -34,32 +35,44 @@ dependencies {
     runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
     testImplementation 'org.springframework.security:spring-security-test'
+
+    implementation 'org.modelmapper:modelmapper:3.1.0'
+
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0'
 
     testCompileOnly 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
 
-    implementation 'org.modelmapper:modelmapper:3.1.0'
-
-    implementation 'io.springfox:springfox-boot-starter:3.0.0' // Springfox 버전 수정
-    implementation 'io.springfox:springfox-swagger-ui:3.0.0' // Springfox 버전 수정
-
     implementation 'com.google.code.gson:gson:2.8.9'
 
-    implementation 'io.jsonwebtoken:jjwt:0.9.1'
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5',
+            'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
-    implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
+    implementation "com.querydsl:querydsl-jpa:${queryDslVersion}:jakarta"
+
 
     annotationProcessor(
-
-            "javax.persistence:javax.persistence-api",
-
-            "javax.annotation:javax.annotation-api",
-
-            "com.querydsl:querydsl-apt:${queryDslVersion}:jpa")
+            "jakarta.persistence:jakarta.persistence-api",
+            "jakarta.annotation:jakarta.annotation-api",
+            "com.querydsl:querydsl-apt:${queryDslVersion}:jakarta")
 
 }
 
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+sourceSets {
+
+    main {
+        java {
+            srcDirs = ["$projectDir/src/main/java", "$projectDir/build/generated"]
+        }
+    }
+}
+
+
+compileJava.dependsOn('clean')
